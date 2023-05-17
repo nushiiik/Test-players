@@ -1,105 +1,80 @@
 <template>
-  <h1>Редактирование игроков</h1>
+  <section class="edit-players">
+    <h3 class="edit-players__title">Редактирование игроков</h3>
 
-  <div
-    v-for="item in usersLife"
-    :key="item.name"
-    class="row"
-  >
-      <input id="name" v-model="item.name">
-      <a class="button" href="#" @click.prevent="minusLife(item)">-</a>
-      <span class="lifeCount">{{item.life}}</span>
-      <a class="button" href="#" @click.prevent="plusLife(item)">+</a>
-  </div>
-  
-  <h2>Рейтинг</h2>
-  <table>
-    <tr
-    v-for="(item, index) in rating"
-    :key="index"
-    >
-    <td v-text="`${index + 1}`"></td>
-    <td v-text="`У игрока <b>${item.name}</b> ${item.life} жизней`"></td>
-  </tr>
-  </table>
+    <div class="edit-players__players-list">
+      <div
+          v-for="player in players"
+          :key="player.name"
+          class="edit-players__player-form"
+      >
+        <input class="edit-players__player-form-input" v-model="player.name">
+        <div class="edit-players__player-life-counter">
+          <button class="edit-players__player-life-counter-btn" @click="minusLife(player)">-</button>
+          <span class="edit-players__player-life-counter-value">{{player.life}}</span>
+          <button class="edit-players__player-life-counter-btn" @click="plusLife(player)">+</button>
+        </div>
+      </div>
+    </div>
+  </section>
 </template>
 
 <script>
 export default {
-  name: 'LifeCounter',
-
+  name: 'EditPlayers',
   props: {
-    playersList: {
-      type: Array
-    },
+    modelValue: Array,
   },
-  
-  data () {
+  data() {
     return {
+      players: this.modelValue,
     };
   },
-  
-  created() {
-    for (let i = 0; i < this.playersList; i++) {
-      this.usersLife.push({
-        name: this.playersList.name,
-        life: this.playersList.life
-      });
-    }
-  },
-  
-  computed: {
-    usersLife () {
-      return [...this.playersList]
-    },
-    rating () {
-      let places = this.usersLife;
-  
-      places.sort((a, b) => b.life - a.life);
-     
-      return places;
-    }
-  },
-  
   methods: {
     plusLife (item) {
       item.life++;
+      this.$emit('update:modelValue', this.players);
     },
-
     minusLife (item) {
       item.life--;
-    }
+      this.$emit('update:modelValue', this.players);
+    },
   },
-}
+};
 </script>
 
 <style lang="scss">
-    .row {
-        display: flex;
-        align-items: center;
-        margin-top: 20px;
+  .edit-players {
+    &__player-form {
+      display: flex;
+      align-items: center;
+      margin-top: 20px;
 
-        input {
-            margin-right: 12px;
-            width: 100%;
-            height: 24px;
-        }
-
-        .button {
-          width: 24px;
-          height: 24px;
-        }
-
-        .life {
-          margin: 0 12px;
-        }
-    }
-
-    table {
-      width: 100%;
-
-      td {
-        border: 1px solid #2c3e50;
+      &-input {
+        width: 100%;
+        padding: 10px 15px;
+        border: 2px solid orange;
+        border-radius: 5px;
+        margin-right: 25px;
       }
     }
+    &__player-life-counter {
+      display: flex;
+      align-items: center;
+
+      &-value {
+        margin: 0 12px;
+      }
+
+      &-btn {
+        width: 25px;
+        background: orange;
+        color: white;
+        border-color: orange;
+        font-weight: bold;
+        border-radius: 5px;
+        padding: 5px;
+      }
+    }
+  }
 </style>
